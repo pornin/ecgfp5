@@ -1,0 +1,23 @@
+[package]
+name = "ecgfp5"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[[bench]]
+name = "field"
+path = "benches/field.rs"
+harness = false
+
+[[bench]]
+name = "curve"
+path = "benches/curve.rs"
+harness = false
+
+[[bench]]
+name = "scalar"
+path = "benches/scalar.rs"
+harness = false
