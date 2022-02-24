@@ -298,11 +298,13 @@ the quotient of the ring of polynomials in the base field, by a given
 unitary irreducible polynomial $M$ of degree $k$. Since multiplications
 in the extension field will involve reductions modulo $M$, performance
 should be best if using an $M$ of minimal Hamming weight, and with
-non-zero coefficients as close to 1 or -1 as possible. Among polynomials
-in $\GF(p)[z]$, none of the following polynomials happens to be
-irreducible: $z^5$, $z^5 \pm 1$, $z^5 \pm z^i \pm 1$ for any $i \in
-[1;4]$, $z^5 \pm 2$. The next best choices are $z^5 - 3$ and $z^5 + 3$,
-which are both irreducible; we thus choose $M = z^5 - 3$.
+non-zero coefficients as close to 1 or -1 as possible; moreover, a
+modulus with format $z^5 - c$ for some constant $c$ makes the Frobenius
+operator especially inexpensive. Among polynomials in $\GF(p)[z]$, none
+of the following polynomials happens to be irreducible: $z^5$, $z^5 \pm
+1$, $z^5 \pm z^i \pm 1$ for any $i \in [1;4]$, $z^5 \pm 2$. The next
+best choices are $z^5 - 3$ and $z^5 + 3$, which are both irreducible; we
+thus choose $M = z^5 - 3$.
 
 \section{In-VM Implementation}
 
