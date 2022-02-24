@@ -34,7 +34,8 @@
 \patchcmd{\maketitle}{\addcontentsline}{\llncs@addcontentsline}{}{}
 \setcounter{tocdepth}{3}
 \makeatother
-\PassOptionsToPackage{hyphens}{url}
+%\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
 \usepackage[pdftex,bookmarks=true]{hyperref}
 \hypersetup{
     bookmarksopen=true,
@@ -1252,7 +1253,7 @@ fine details of curve attacks in extension fields.
 
 % Ideally we would do that only for URLs, but I don't know how to do
 % that in a non-painful way.
-\RaggedRight
+%\RaggedRight
 
 \bibitem{AntBroGalLamStrVan2005}
 A.~Antipa, D.~Brown, R.~Gallant, R.~Lambert, R.~Struik and S.~Vanstone,
@@ -1326,7 +1327,7 @@ $\mathbb{F}_q^5$},
 Journal of Cryptology, vol.~26, issue~1, pp.~119-143, 2013.
 
 \bibitem{MidenVM}
-\emph{Polygon Miden},
+\emph{Polygon Miden},\\
 \url{https://github.com/maticnetwork/miden}
 
 \bibitem{MidenAsm}
