@@ -245,9 +245,9 @@ provided at:
 
 Since $p$ is a 64-bit integer, we need to work in a field extension
 $\GF(p^k)$ in order to have a field large enough to obtain a curve with
-an adequate security. We aim at the usual ``128-bit security'' level.
-For such a level, we need a field with at least a 256-bit order, hence
-$k \geq 4$. Robustness of elliptic curve discrete logarithm in extension
+adequate security. We aim at the usual ``128-bit security'' level. For
+such a level, we need a field with at least a 256-bit order, hence $k
+\geq 4$. Robustness of elliptic curve discrete logarithm in extension
 fields has been studied in various articles. A rough summary is the
 following:
 \begin{itemize}
@@ -477,7 +477,7 @@ leading to the following process:
 \end{enumerate}
 The overall cost is 186.
 
-\paragraph{Square Root.} We can use, again, the Frobenius operators to
+\paragraph{Square Root.} We can use, again, the Frobenius operator to
 speed up square roots, by noticing that, for $x\neq 0$ in $\GF(p^5)$:
 \begin{eqnarray*}
     \sqrt{x} &=& \sqrt{\frac{x^r}{x^{r-1}}} \\
@@ -565,8 +565,8 @@ we will use, in particular the point addition formulas.
 
 \subsection{Curve Formulas}\label{sec:invm-curve-formulas}
 
-Since inversions in $\GF(p^5)$ are quite efficient (cost lower than
-three times the cost of a multiplication in $\GF(p^5)$), the most
+Since inversions in $\GF(p^5)$ are quite efficient (their cost is lower
+than three times the cost of a multiplication in $\GF(p^5)$), the most
 efficient formulas for computing point additions and doublings are
 obtained by working with the short Weierstraß equation and affine
 coordinates. Moreover, \emph{any} elliptic curve over $\GF(p^5)$ can be
@@ -757,7 +757,7 @@ be used:
 
 It can be shown that in this process, if input $P$ was not the
 point-at-infinity, then for all digits except the last two ($d_1$ and
-$d_0$), the addition of the looked up point $d_i P$ to the current $Q$
+$d_0$), the addition of the looked-up point $d_i P$ to the current $Q$
 cannot be an edge case of the point addition formulas; thus, each of
 these additions can be the specialized routine with cost 290; only the
 last two iterations need to use the generic routine with cost 387.
@@ -1099,7 +1099,7 @@ This reduction works as follows:
     \end{equation*}
     Otherwise, if $x_0 + x_1 \geq 2^{32}$, then $e = 1$, and:
     \begin{equation*}
-        0 = 2^{64} - (2^{32} - 1) - p \leq 2^{32}(x_0 + x_1) - x_1 - p
+        0 = 2^{64} - (2^{32} - 1) - p \leq b = 2^{32}(x_0 + x_1) - x_1 - p
         \leq 2^{32}(2^{33} - 2) - 1 - p < p
     \end{equation*}
     In both cases, the computed value indeed fits in the variable \verb+b+
@@ -1114,19 +1114,20 @@ This reduction works as follows:
                          &=& -2^{64} (2^{32} (x_0 + x_1) - x_1) \mod p \\
                          &=& -2^{64} b \mod p
     \end{eqnarray*}
+
     Therefore, $x/2^{64} = x_2 - b \bmod p$. At that point, we have both
     $x_2$ (in \verb+xh+) and $b$ (in \verb+b+), and both are in the
     $[0;p-1]$ range; thus, we only have to do a single subtraction, and
-    adding back $p$ in case that would yield a negative result. This is
-    what is done in the last two lines of the function. Specifically,
-    a subtraction is done with result in \verb+r+ and borrow flag in
-    \verb+c+. If the borrow is 1, then we subtract it from zero with
-    a 32-bit wrapping operation, which then yields
+    potentially adding back $p$ if this subtraction yields a negative
+    result. This is what is done in the last two lines of the function.
+    Specifically, a subtraction is done with result in \verb+r+ and
+    borrow flag in \verb+c+. If the borrow is 1, then we subtract it
+    from zero with a 32-bit wrapping operation, which then yields
     $2^{32}-1 = -p \bmod 2^{64}$. We then subtract that value from
-    \verb+r+, which is equivalent to adding $p$ (modulo $2^{64}$). It
-    is easily seen that if there were no borrow (\verb+c+ is zero),
-    then the last line does not change the value of \verb+r+. In both
-    cases, the correctly reduced output value is computed.
+    \verb+r+, which is equivalent to adding $p$ (modulo $2^{64}$). It is
+    easily seen that if there were no borrow (\verb+c+ is zero), then
+    the last line does not change the value of \verb+r+. In both cases,
+    the correctly reduced output value is computed.
 
 \end{itemize}
 
@@ -1235,8 +1236,8 @@ We presented an elliptic curve designed for a specific compute model.
 Although we use the Miden VM as a representative of that model, we
 expect this curve to be generally useful for other projects related to
 zero-knowledge proofs; curve design and implementation is also an
-interesting problem in its own right. As a fully general-purpose curve,
-ecGFp5 performance is not on par with the fastest standard curves (e.g.
+interesting problem in its own right. As a general-purpose curve, ecGFp5
+performance is not on par with the fastest standard curves (e.g.
 Curve25519), but is still decent enough: a single core on a laptop
 computer or a smartphone can generate or verify thousands of signatures
 per second.
