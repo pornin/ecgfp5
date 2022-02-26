@@ -129,7 +129,7 @@
 \institute{NCC Group, \email{thomas.pornin@nccgroup.com}}
 
 \maketitle
-\noindent\makebox[\textwidth]{23 February, 2022}
+\noindent\makebox[\textwidth]{26 February, 2022}
 %FIXME: adjust date when (re)publishing
 
 \begin{abstract}
@@ -170,20 +170,21 @@ $\GF(p)$ have the same unit cost; this includes additions, subtractions,
 multiplications, and, crucially, divisions.
 
 The chosen curve has the following parameters. We first define the
-finite field extension $\GF(p^5) = \GF(p)[z]/(z^5-3)$, i.e. the
-ring of polynomials (in the symbolic variable $z$) with coefficients
-in $\GF(p)$, and all operations performed modulo the polynomial $z^5-3$.
-Thus, all elements can be represented as five elements of $\GF(p)$,
-corresponding to the five coefficients of a polynomial of degree at
-most 5. Since $z^5-3$ is irreducible over $\GF(p)$, this defines a
-finite field of cardinal $p^5$.
+finite field extension $\GF(p^5) = \GF(p)[z]/(z^5-3)$, i.e. the ring of
+polynomials (in the symbolic variable $z$) with coefficients in
+$\GF(p)$, and all operations performed modulo the irreducible polynomial
+$z^5-3$. Every element of $\GF(p^5)$ can be represented as five elements
+of $\GF(p)$, corresponding to the five coefficients of a polynomial of
+degree at most 4.
 
-We define an elliptic curve of equation:
+We define, over $\GF(p^5)$, an elliptic curve of equation:
 \begin{equation*}
     y^2 = x(x^2 + 2x + 263z)
 \end{equation*}
-This is a \emph{double-odd curve}\cite{Por2020-4}: its order is $2n$
-for the 319-bit prime integer:
+
+This is a \emph{double-odd curve}\cite{Por2020-4}, with equation
+constants $a = 2$ and $b = 263z$; its order is $2n$ for the 319-bit
+prime integer:
 \begin{eqnarray*}
     n &=& 106799351671714695104148491657179270274505774058 \\
       & & 1727230159139685185762082554198619328292418486241
@@ -254,7 +255,7 @@ following:
 
     \item If the extension degree $k$ is composite, then Weil descent
     attacks may apply, using a tower of field extensions to turn the
-    problem into a discrete logarithm in an higher genus curve on a
+    problem into a discrete logarithm in a higher genus curve on a
     smaller field\cite{GauHesSma2002,AriMatNagShi2004}. To avoid such
     issues, a prime degree is highly recommended. Diem showed that if
     $k$ is prime and not lower than $11$, then such attacks cannot
@@ -266,12 +267,13 @@ following:
 
 \end{itemize}
 
-For performance reasons, we would like to have $k$ as small as possible.
-Using $k = 4$ would allow the known attacks on quartic extension
-fields\cite{AriMatNagShi2004}, with complexity about $O(p^{3/2}) \approx
-2^{96}$. Though this value is quite larger than what can practically be
-implemented, it still falls short of the expected ``128-bit'' level.
-Thus, we need at least $k = 5$.
+For performance reasons, we would like to have $k$ as small as possible;
+$k = 11$ would lead to a 704-bit field where computations would be too
+expensive. Using $k = 4$ would allow the known attacks on quartic
+extension fields\cite{AriMatNagShi2004}, with complexity about
+$O(p^{3/2}) \approx 2^{96}$. Though this value is quite larger than what
+can practically be implemented, it still falls short of the expected
+``128-bit'' level. Thus, we need at least $k = 5$.
 
 With $k = 5$, Gaudry's attack entails computing about $p^{2-2/5} \approx
 2^{102.4}$ systems of polynomial equations, and obtaining a Gröbner
@@ -289,9 +291,10 @@ Joux and Vitse's variant has cost $O(C p^2)$ for some constant $C$ that
 depends on $k$, again above the 128-bit level.
 
 We can thus claim that a degree-5 extension field, $\GF(p^5)$, is
-sufficient to achieve 128-bit security.
+sufficient to achieve 128-bit security against all known attacks on
+discrete logarithm on elliptic curves.
 
-All finite fields with the same cardinal are isomorphic to each other;
+All finite fields with the same cardinality are isomorphic to each other;
 we can thus choose whatever definition of that field provides the best
 performance. Field extensions of degree $k$ are classically defined as
 the quotient of the ring of polynomials in the base field, by a given
@@ -407,9 +410,9 @@ Therefore, for any non-zero $x$ in $\GF(p^5)$, we have:
     x^{p^5-1} = 1 = (x^r)^{p-1}
 \end{equation*}
 Thus, $x^r$ is a root of the polynomial $X^{p-1}-1$. Since the roots of
-that polynomial are exactly the elements of $\GF(p)$, this implies that
-$x^r \in \GF(p)$ for any $x$ in $\GF(p^5)$. We can thus write the inverse
-of $x$ as:
+that polynomial are exactly the non-zero elements of $\GF(p)$, this
+implies that $x^r \in \GF(p)$ for any $x$ in $\GF(p^5)$. We can thus
+write the inverse of $x$ as:
 \begin{equation*}
     \frac{1}{x} = \frac{x^{r-1}}{x^r}
 \end{equation*}
@@ -423,13 +426,15 @@ use of the Frobenius operator. Define $\phi_1(x) = x^p$ for any $x \in
 $y$. Thus, if $x = \sum_i x_i z^i$, then:
 \begin{eqnarray*}
     \phi_1(x) &=& \sum_{i=0}^4 \phi_1(x_i) z^{pi} \\
-              &=& \sum_{i=0}^4 x_i (3^{i\lfloor p/5 \rfloor}) z^{i(p \bmod 5)}
+              &=& \sum_{i=0}^4 x_i (3^{\lfloor pi/5 \rfloor}) z^{pi \bmod 5}
 \end{eqnarray*}
-In our case, $p \bmod 5 = 1$, so the Frobenius operator is computed by
-simply multiplying all five coefficients by precomputed constants, the
-first of which being furthermore equal to 1. This is done in cost 4. We
-similarly define $\phi_2(x) = \phi_1(\phi_1(x))$, which is also
-computed in cost 4.
+which boils down to multiplying each coefficient by a precomputed
+constant, and possibly reordering them. In our case, $p = 1 \bmod 5$,
+which means that $z^{pi \bmod 5} = z^i$, and there is no reordering;
+also, one of the five precomputed constants is $3^0 = 1$. The cost of
+the Frobenius operator is thus only 4 cycles. We similarly define
+$\phi_2(x) = \phi_1(\phi_1(x))$, which is also computed in cost 4 (we
+will also call $\phi_2$ a ``Frobenius operator'').
 
 With the Frobenius operator, we compute $x^{r-1}$ as:
 \begin{eqnarray*}
@@ -494,7 +499,7 @@ compute $x^{(r-1)/2}$ as:
 We can write $x^{(p+1)/2} = x^{2^{63} + 1} / x^{2^{31}}$, allowing the
 computation of that value with 63 squarings, one multiplication and one
 inversion in $\GF(p^5)$. Once we obtained $x^{(p+1)/2}$, we use it to
-compute $x^{(r-1)/2}$ as show above, with two Frobenius operators and
+compute $x^{(r-1)/2}$ as shown above, with two Frobenius operators and
 one multiplication. We can furthermore derive $x^r$ from $x^{(r-1)/2}$
 with a squaring (to get $x^{r-1}$) then a multiplication by $x$; the
 latter only needs to compute the lowest coefficient, since $x^r \in
@@ -509,7 +514,7 @@ inexpensive:
 \begin{enumerate}
 
     \item Let $n = 32$ and $q = 2^{32} - 1$, so that $q$ is odd and
-    $p = q 2^n + 1$. Let $g$ be a primitive $2^n$ root of unity in
+    $p = q 2^n + 1$. Let $g$ be a primitive $2^n$-th root of unity in
     $\GF(p)$ (we can use $g = 7^q \bmod p$, since $7$ is a non-QR in
     $\GF(p)$). We precompute values $g_i = g^{2^i}$ for $i = 0$ to
     $n-1$.
@@ -535,7 +540,7 @@ inexpensive:
 The algorithm above entails $(n-1)(n-2)/2 = 450$ squarings, and some other
 operations, for a total of 659 cycles for the square root in $\GF(p)$.
 Combined with the computations of $x^{(r-1)/2}$ and $x^r$, and finally
-combining together the value, we compute a square root in $\GF(p^5)$
+putting together the values, we compute a square root in $\GF(p^5)$
 in a total of 3261 cycles. The routine returns two values, the square
 root itself, and a Boolean value reporting the success of the process;
 if the input value was not a square, the returned ``square root'' is zero,
@@ -555,7 +560,7 @@ operations in $\GF(p^5)$:
         inversion        &  128 \\
         division         &  177 \\
         Legendre symbol  &  186 \\
-        Square root      & 3261 \\
+        square root      & 3261 \\
         \hline
     \end{tabular}
 \end{center}
@@ -619,7 +624,7 @@ for the ecGFp5 element $(x, y)$), compute the following:
     is not a validly encoded point)
 
     \item \label{step:decode-choose-qr}If $x_1$ is a quadratic residue,
-    then set $x = x_1$; otherwise, set $x = x_2$.
+    then set $x = x_1$; otherwise, set $x = x_2$
 
     \item Return $(X, Y) = (x + a/3, -wx)$
 
@@ -661,7 +666,7 @@ is added to itself, and $\lambda$ must instead be computed as:
 A \emph{complete routine} that supports all cases looks like this:
 \begin{enumerate}
 
-    \item Inputs are point $(X_1, Y_1)$ (with infinity flag $I_1$) and
+    \item Inputs are points $(X_1, Y_1)$ (with infinity flag $I_1$) and
     $(X_2, Y_2)$ (with flag $I_2$).
 
     \item Compare $X_1$ with $X_2$, yielding a Boolean $s_x$ with value
@@ -850,7 +855,7 @@ Computation of $d P + e Q$ for two points $P$ and $Q$, and two scalars
 $d$ and $e$, can still use Straus's algorithm\cite{Str1964} (often known
 in cryptography as ``Shamir's trick'') to mutualize point doublings,
 i.e. perform about 320 doublings in total, instead of 640 as would be
-obtained with two seperate point multiplication operations.
+obtained with two separate point multiplication operations.
 
 \section{Curve Parameters Selection}
 
@@ -965,7 +970,7 @@ efficiently than in the curve itself), but it would hint at some
 unexpected internal structure. In the case of ecGFp5, we checked that
 $e = (n - 1)/5$, i.e. a 317-bit integer, close to the size of $n$ itself,
 as is expected of a randomly selected curve. To perform this check, notice
-that $e$ is necessarily a divisor or $n - 1$; thus, we can factor $n - 1$
+that $e$ is necessarily a divisor of $n - 1$; thus, we can factor $n - 1$
 to try all values $(n-1)/r$ for any prime $r$ that divides $n - 1$. The
 factorization of $n - 1$ is:
 \begin{eqnarray*}
@@ -1015,7 +1020,7 @@ opcodes available on that CPU, in particular \verb+mulx+):
         $\GF(p)$ multiplication          &     10.18 \\
         $\GF(p)$ inversion               &    737.39 \\
         $\GF(p)$ Legendre symbol         &    714.20 \\
-        $\GF(p)$ Square root             &   5430.19 \\
+        $\GF(p)$ square root             &   5430.19 \\
         \hline
         $\GF(p^5)$ addition              &      8.80 \\
         $\GF(p^5)$ subtraction           &      5.78 \\
@@ -1023,7 +1028,7 @@ opcodes available on that CPU, in particular \verb+mulx+):
         $\GF(p^5)$ squaring              &     68.63 \\
         $\GF(p^5)$ inversion             &   1069.75 \\
         $\GF(p^5)$ Legendre symbol       &   1042.20 \\
-        $\GF(p^5)$ Square root           &  12410.38 \\
+        $\GF(p^5)$ square root           &  12410.38 \\
         \hline
         ecGFp5 point addition            &   1328.50 \\
         ecGFp5 point doubling            &    985.37 \\
@@ -1120,7 +1125,7 @@ This reduction works as follows:
     Therefore, $x/2^{64} = x_2 - b \bmod p$. At that point, we have both
     $x_2$ (in \verb+xh+) and $b$ (in \verb+b+), and both are in the
     $[0;p-1]$ range; thus, we only have to do a single subtraction, and
-    potentially adding back $p$ if this subtraction yields a negative
+    potentially add back $p$ if this subtraction yields a negative
     result. This is what is done in the last two lines of the function.
     Specifically, a subtraction is done with result in \verb+r+ and
     borrow flag in \verb+c+. If the borrow is 1, then we subtract it
@@ -1133,10 +1138,10 @@ This reduction works as follows:
 
 \end{itemize}
 
-Using Montgomery representation has the benefit of producing stricly
-normalized values in $[0;p-1]$ range, which allows fast subtractions and
-additions. Subtraction modulo $p$ is implemented just like the last two
-lines of the reduction function, described above; it has an expected
+Using Montgomery representation has the benefit of producing strictly
+normalized values in the $[0;p-1]$ range, which allows fast subtractions
+and additions. Subtraction modulo $p$ is implemented just like the last
+two lines of the reduction function, described above; it has an expected
 latency of 3 cycles, which is corroborated by the benchmarks.
 
 Montgomery multiplication is a $64\times 64\rightarrow 128$
@@ -1219,8 +1224,9 @@ slightly better.
 For the special case of multiplying the conventional generator, multiple
 windows can be used (in our implementation, eight windows are used, for
 $G$, $2^{40} G$, $2^{80} G$,...) and they are precomputed, thereby
-avoiding the cost of conversion to affine. This operation is used when
-generating a new key pair, and when producing a Schnorr signature.
+avoiding the cost of conversion to affine coordinates. This operation is
+used when generating a new key pair, and when producing a Schnorr
+signature.
 
 For signature verification, we apply the Antipa et al
 optimization\cite{AntBroGalLamStrVan2005} with Lagrange's lattice
@@ -1249,14 +1255,11 @@ per second.
 We thank Bobbin Threadbare and Hamish Ivey-Law for providing the target
 context and useful discussions on optimized implementations in
 $\GF(p^5)$, and Pierrick Gaudry for pointers and explanations on the
-fine details of curve attacks in extension fields.
+fine details of curve attacks in extension fields. Paul Bottinelli,
+Marie-Sarah Lacharité and Giacomo Pope reviewed this manuscript.
 
 %\newpage
 \begin{thebibliography}{20}
-
-% Ideally we would do that only for URLs, but I don't know how to do
-% that in a non-painful way.
-%\RaggedRight
 
 \bibitem{AntBroGalLamStrVan2005}
 A.~Antipa, D.~Brown, R.~Gallant, R.~Lambert, R.~Struik and S.~Vanstone,
