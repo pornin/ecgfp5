@@ -11,7 +11,8 @@ inherently tied to Miden, but that compute model served as inspiration
 for the curve choice.
 
   - The curve design and choice is explained in the
-    [whitepaper](doc/ecgfp5.pdf).
+    [whitepaper](doc/ecgfp5.pdf). The paper is now also on
+    [eprint](https://eprint.iacr.org/2022/274).
 
   - A test implementation, in Python, is provided in the [python](python/)
     directory. It emulates operations as they are meant to occur within
