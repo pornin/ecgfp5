@@ -421,7 +421,7 @@ class GFpImpl:
             #   also multiply u by g[n-i-1], which is a square root of
             #   g[n-i]. This is true regardless of whether x is a QR
             #   or not. Therefore, if v = 1 after the loop, then it
-            #   MUST be that x^2 = u.
+            #   MUST be that u^2 = x.
             #
             #   If u = 0 on input, then all u and v are zero throughout,
             #   and the algorithm returns u = 0, which is correct.
